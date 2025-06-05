@@ -1,0 +1,222 @@
+/* ChatGPT 美化复制助手 - 样式文件 */
+
+/* 增强复制按钮容器 */
+.enhanced-copy-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+/* 增强复制按钮 */
+.enhanced-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.enhanced-copy-btn:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+}
+
+.enhanced-copy-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+}
+
+.enhanced-copy-btn svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.9;
+}
+
+/* 下拉菜单 */
+.copy-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  min-width: 180px;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.copy-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  color: #333;
+}
+
+.dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  color: #667eea;
+}
+
+.dropdown-item .style-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+/* 消息操作容器 */
+.message-actions {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 通知样式 */
+.copy-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10001;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.copy-notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.copy-notification.success {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.copy-notification.error {
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  color: white;
+}
+
+.copy-notification.info {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .enhanced-copy-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  
+  .enhanced-copy-btn span {
+    display: none;
+  }
+  
+  .copy-dropdown {
+    min-width: 150px;
+  }
+  
+  .dropdown-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .copy-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    transform: translateY(-100%);
+  }
+  
+  .copy-notification.show {
+    transform: translateY(0);
+  }
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .copy-dropdown {
+    background: #2d2d2d;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .dropdown-item {
+    color: #e0e0e0;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  
+  .dropdown-item:hover {
+    background: linear-gradient(135deg, #3a3a3a 0%, #4a4a4a 100%);
+    color: #667eea;
+  }
+  
+  .message-actions {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.enhanced-copy-container {
+  animation: fadeInUp 0.3s ease;
+}
+
+/* 提升按钮的可访问性 */
+.enhanced-copy-btn:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.dropdown-item:focus {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+  color: #667eea;
+  outline: none;
+} 

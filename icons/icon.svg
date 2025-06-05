@@ -1,0 +1,67 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 渐变背景 -->
+    <radialGradient id="bgGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- 聊天泡泡渐变 -->
+    <linearGradient id="bubbleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#f8f9ff;stop-opacity:0.8" />
+    </linearGradient>
+    
+    <!-- 复制图标渐变 -->
+    <linearGradient id="copyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#667eea;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 阴影滤镜 -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#00000020"/>
+    </filter>
+  </defs>
+  
+  <!-- 背景圆形 -->
+  <circle cx="64" cy="64" r="60" fill="url(#bgGradient)" filter="url(#shadow)"/>
+  
+  <!-- 主聊天泡泡 -->
+  <path d="M32 38 C32 30, 38 24, 46 24 L82 24 C90 24, 96 30, 96 38 L96 62 C96 70, 90 76, 82 76 L54 76 L42 86 L42 76 L46 76 C38 76, 32 70, 32 62 Z" 
+        fill="url(#bubbleGradient)" 
+        stroke="#ffffff40" 
+        stroke-width="1"/>
+  
+  <!-- 聊天泡泡内的文本线条 -->
+  <rect x="42" y="34" width="32" height="3" rx="1.5" fill="#667eea" opacity="0.6"/>
+  <rect x="42" y="42" width="28" height="3" rx="1.5" fill="#667eea" opacity="0.5"/>
+  <rect x="42" y="50" width="35" height="3" rx="1.5" fill="#667eea" opacity="0.4"/>
+  <rect x="42" y="58" width="24" height="3" rx="1.5" fill="#667eea" opacity="0.3"/>
+  
+  <!-- 小聊天泡泡 -->
+  <circle cx="102" cy="52" r="8" fill="url(#bubbleGradient)" stroke="#ffffff40" stroke-width="1"/>
+  <circle cx="99" cy="50" r="1.5" fill="#667eea" opacity="0.5"/>
+  <circle cx="102" cy="52" r="1.5" fill="#667eea" opacity="0.6"/>
+  <circle cx="105" cy="54" r="1.5" fill="#667eea" opacity="0.5"/>
+  
+  <!-- 复制图标 -->
+  <g transform="translate(52, 88)">
+    <!-- 后面的文档 -->
+    <rect x="4" y="0" width="16" height="20" rx="2" fill="url(#copyGradient)" opacity="0.7"/>
+    <!-- 前面的文档 -->
+    <rect x="0" y="4" width="16" height="20" rx="2" fill="url(#copyGradient)" stroke="#ffffff" stroke-width="1"/>
+    <!-- 复制符号 -->
+    <path d="M6 10 L6 18 M10 10 L10 18 M6 14 L10 14" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+  
+  <!-- 装饰性星星 -->
+  <g fill="#ffffff" opacity="0.6">
+    <path d="M20 20 L22 24 L26 22 L22 26 Z" transform="rotate(45 22 22)"/>
+    <path d="M100 96 L102 100 L106 98 L102 102 Z" transform="rotate(-30 102 98)"/>
+    <path d="M108 28 L109 30 L111 29 L109 31 Z" transform="rotate(15 109 29)"/>
+  </g>
+  
+  <!-- 高光效果 -->
+  <ellipse cx="48" cy="36" rx="12" ry="8" fill="#ffffff" opacity="0.2"/>
+</svg> 

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图标生成器 - ChatGPT 美化复制助手</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .preview-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .icon-preview {
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+        
+        .icon-preview img {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: #f5f5f5;
+        }
+        
+        .icon-size {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .generate-section {
+            border-top: 1px solid #eee;
+            padding-top: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .instructions h3 {
+            color: #495057;
+            margin-top: 0;
+        }
+        
+        .instructions ol {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+        
+        .download-links {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .download-link {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        
+        .download-link:hover {
+            background: #218838;
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Chrome插件图标生成器</h1>
+        
+        <div class="preview-section">
+            <h3>图标预览</h3>
+            <div class="icon-preview">
+                <canvas id="canvas16" width="16" height="16"></canvas>
+                <div class="icon-size">16x16</div>
+            </div>
+            <div class="icon-preview">
+                <canvas id="canvas48" width="48" height="48"></canvas>
+                <div class="icon-size">48x48</div>
+            </div>
+            <div class="icon-preview">
+                <canvas id="canvas128" width="128" height="128"></canvas>
+                <div class="icon-size">128x128</div>
+            </div>
+        </div>
+        
+        <div class="generate-section">
+            <h3>生成PNG图标</h3>
+            <button class="btn" onclick="generateIcon(16)">生成 16x16</button>
+            <button class="btn" onclick="generateIcon(48)">生成 48x48</button>
+            <button class="btn" onclick="generateIcon(128)">生成 128x128</button>
+            <button class="btn" onclick="generateAllIcons()">生成全部尺寸</button>
+            
+            <div id="status" class="status" style="display: none;"></div>
+            
+            <div id="downloadLinks" class="download-links">
+                <h4>下载图标文件:</h4>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 使用说明</h3>
+            <ol>
+                <li>点击上方按钮生成对应尺寸的PNG图标</li>
+                <li>右键点击生成的图标，选择"图片另存为"</li>
+                <li>将文件保存为对应的文件名：
+                    <ul>
+                        <li><code>icon16.png</code> - 16x16像素</li>
+                        <li><code>icon48.png</code> - 48x48像素</li>
+                        <li><code>icon128.png</code> - 128x128像素</li>
+                    </ul>
+                </li>
+                <li>将生成的PNG文件放入插件的 <code>icons/</code> 文件夹中</li>
+                <li>重新加载Chrome插件即可看到新图标</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // SVG图标内容
+        const svgContent = `
+            <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="bgGradient" cx="50%" cy="30%" r="70%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                    </radialGradient>
+                    
+                    <linearGradient id="bubbleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                        <stop offset="100%" style="stop-color:#f8f9ff;stop-opacity:0.8" />
+                    </linearGradient>
+                    
+                    <linearGradient id="copyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4a90e2;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#667eea;stop-opacity:1" />
+                    </linearGradient>
+                    
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="2" dy="4" stdDeviation="3" flood-color="#00000020"/>
+                    </filter>
+                </defs>
+                
+                <circle cx="64" cy="64" r="60" fill="url(#bgGradient)" filter="url(#shadow)"/>
+                
+                <path d="M32 38 C32 30, 38 24, 46 24 L82 24 C90 24, 96 30, 96 38 L96 62 C96 70, 90 76, 82 76 L54 76 L42 86 L42 76 L46 76 C38 76, 32 70, 32 62 Z" 
+                      fill="url(#bubbleGradient)" 
+                      stroke="#ffffff40" 
+                      stroke-width="1"/>
+                
+                <rect x="42" y="34" width="32" height="3" rx="1.5" fill="#667eea" opacity="0.6"/>
+                <rect x="42" y="42" width="28" height="3" rx="1.5" fill="#667eea" opacity="0.5"/>
+                <rect x="42" y="50" width="35" height="3" rx="1.5" fill="#667eea" opacity="0.4"/>
+                <rect x="42" y="58" width="24" height="3" rx="1.5" fill="#667eea" opacity="0.3"/>
+                
+                <circle cx="102" cy="52" r="8" fill="url(#bubbleGradient)" stroke="#ffffff40" stroke-width="1"/>
+                <circle cx="99" cy="50" r="1.5" fill="#667eea" opacity="0.5"/>
+                <circle cx="102" cy="52" r="1.5" fill="#667eea" opacity="0.6"/>
+                <circle cx="105" cy="54" r="1.5" fill="#667eea" opacity="0.5"/>
+                
+                <g transform="translate(52, 88)">
+                    <rect x="4" y="0" width="16" height="20" rx="2" fill="url(#copyGradient)" opacity="0.7"/>
+                    <rect x="0" y="4" width="16" height="20" rx="2" fill="url(#copyGradient)" stroke="#ffffff" stroke-width="1"/>
+                    <path d="M6 10 L6 18 M10 10 L10 18 M6 14 L10 14" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+                </g>
+                
+                <g fill="#ffffff" opacity="0.6">
+                    <path d="M20 20 L22 24 L26 22 L22 26 Z" transform="rotate(45 22 22)"/>
+                    <path d="M100 96 L102 100 L106 98 L102 102 Z" transform="rotate(-30 102 98)"/>
+                    <path d="M108 28 L109 30 L111 29 L109 31 Z" transform="rotate(15 109 29)"/>
+                </g>
+                
+                <ellipse cx="48" cy="36" rx="12" ry="8" fill="#ffffff" opacity="0.2"/>
+            </svg>
+        `;
+
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+        }
+
+        function generateIcon(size) {
+            const canvas = document.getElementById(`canvas${size}`);
+            const ctx = canvas.getContext('2d');
+            
+            // 创建临时图片元素
+            const img = new Image();
+            const svgBlob = new Blob([svgContent], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            
+            img.onload = function() {
+                // 清空画布
+                ctx.clearRect(0, 0, size, size);
+                
+                // 绘制SVG到画布
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                // 创建下载链接
+                canvas.toBlob(function(blob) {
+                    const downloadUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = `icon${size}.png`;
+                    link.className = 'download-link';
+                    link.textContent = `📥 下载 icon${size}.png`;
+                    
+                    // 添加到下载区域
+                    const downloadLinks = document.getElementById('downloadLinks');
+                    downloadLinks.style.display = 'block';
+                    
+                    // 移除已有的同尺寸链接
+                    const existingLink = downloadLinks.querySelector(`[download="icon${size}.png"]`);
+                    if (existingLink) {
+                        existingLink.remove();
+                    }
+                    
+                    downloadLinks.appendChild(link);
+                    showStatus(`✅ ${size}x${size} 图标生成成功！`, 'success');
+                }, 'image/png');
+                
+                URL.revokeObjectURL(url);
+            };
+            
+            img.onerror = function() {
+                showStatus(`❌ 生成 ${size}x${size} 图标失败`, 'error');
+            };
+            
+            img.src = url;
+        }
+
+        function generateAllIcons() {
+            showStatus('🔄 正在生成所有尺寸的图标...', 'info');
+            
+            setTimeout(() => generateIcon(16), 100);
+            setTimeout(() => generateIcon(48), 200);
+            setTimeout(() => generateIcon(128), 300);
+            
+            setTimeout(() => {
+                showStatus('🎉 所有图标生成完成！请下载并保存到 icons/ 文件夹', 'success');
+            }, 1000);
+        }
+
+        // 页面加载时预览图标
+        window.onload = function() {
+            setTimeout(() => {
+                generateIcon(16);
+                generateIcon(48);
+                generateIcon(128);
+            }, 500);
+        };
+    </script>
+</body>
+</html> 

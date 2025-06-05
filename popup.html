@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatGPT 美化复制设置</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 320px;
+      min-height: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .content {
+      padding: 20px;
+      background: white;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .style-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .style-option {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: #fafafa;
+    }
+
+    .style-option:hover {
+      border-color: #667eea;
+      background: #f8f9ff;
+    }
+
+    .style-option.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
+    }
+
+    .style-option input[type="radio"] {
+      display: none;
+    }
+
+    .style-icon {
+      font-size: 18px;
+      margin-right: 12px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .style-info {
+      flex: 1;
+    }
+
+    .style-name {
+      font-weight: 500;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .style-desc {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .preview-section {
+      margin-top: 20px;
+    }
+
+    .preview-box {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #666;
+      max-height: 120px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .footer {
+      padding: 20px;
+      background: white;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .save-btn:hover {
+      background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+      transform: translateY(-1px);
+    }
+
+    .save-btn:active {
+      transform: translateY(0);
+    }
+
+    .success-message {
+      background: #4CAF50;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .success-message.show {
+      opacity: 1;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%);
+      border: 1px solid #bbdefb;
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 12px;
+      color: #1976d2;
+      margin-bottom: 16px;
+    }
+
+    .info-box strong {
+      color: #0d47a1;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎨 ChatGPT 美化复制</h1>
+    <p>让你的ChatGPT分享更精彩</p>
+  </div>
+
+  <div class="content">
+    <div class="info-box">
+      <strong>💡 使用提示：</strong><br>
+      在ChatGPT对话页面中，点击AI回复下方的"美化复制"按钮，选择喜欢的卡片样式即可复制美化后的内容！
+    </div>
+
+    <div class="section">
+      <div class="section-title">
+        <span>🎯</span>
+        默认复制样式
+      </div>
+      
+      <div class="style-grid">
+        <label class="style-option" data-style="xiaohongshu">
+          <input type="radio" name="style" value="xiaohongshu">
+          <span class="style-icon">📱</span>
+          <div class="style-info">
+            <div class="style-name">小红书风格</div>
+            <div class="style-desc">适合小红书分享，带话题标签</div>
+          </div>
+        </label>
+
+        <label class="style-option" data-style="colorful">
+          <input type="radio" name="style" value="colorful">
+          <span class="style-icon">🎨</span>
+          <div class="style-info">
+            <div class="style-name">彩色卡片</div>
+            <div class="style-desc">丰富的装饰元素，视觉效果佳</div>
+          </div>
+        </label>
+
+        <label class="style-option" data-style="minimal">
+          <input type="radio" name="style" value="minimal">
+          <span class="style-icon">✨</span>
+          <div class="style-info">
+            <div class="style-name">极简风格</div>
+            <div class="style-desc">简洁优雅，适合专业场景</div>
+          </div>
+        </label>
+
+        <label class="style-option" data-style="quote">
+          <input type="radio" name="style" value="quote">
+          <span class="style-icon">💬</span>
+          <div class="style-info">
+            <div class="style-name">引用风格</div>
+            <div class="style-desc">引用格式，适合技术分享</div>
+          </div>
+        </label>
+
+        <label class="style-option" data-style="default">
+          <input type="radio" name="style" value="default">
+          <span class="style-icon">📋</span>
+          <div class="style-info">
+            <div class="style-name">原始文本</div>
+            <div class="style-desc">保持原始格式，无额外装饰</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="preview-section">
+      <div class="section-title">
+        <span>👀</span>
+        预览效果
+      </div>
+      <div class="preview-box" id="preview">
+        选择一个样式查看预览效果...
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="save-btn" id="saveBtn">保存设置</button>
+    <div class="success-message" id="successMessage">
+      ✅ 设置已保存成功！
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html> 
