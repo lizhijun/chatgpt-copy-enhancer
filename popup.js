@@ -87,6 +87,8 @@ class PopupManager {
         return this.formatMinimalStyle(text, timestamp);
       case 'quote':
         return this.formatQuoteStyle(text, timestamp);
+      case 'image':
+        return this.formatImageStyle(text, timestamp);
       case 'default':
       default:
         return text;
@@ -138,6 +140,21 @@ ${text}
 ${quotedLines}
 
 — ChatGPT · ${timestamp}`;
+  }
+
+  formatImageStyle(text, timestamp) {
+    return `🖼️ 图片预览
+
+📱 将生成精美的图片卡片
+🎨 包含渐变背景和装饰元素
+📝 支持Markdown格式渲染
+⏬ 自动下载到本地
+
+示例内容：
+"${text.substring(0, 100)}${text.length > 100 ? '...' : ''}"
+
+⏰ 生成时间：${timestamp}
+🏷️ #AI问答 #ChatGPT #精美图片`;
   }
 
   async saveSettings() {

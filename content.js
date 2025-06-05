@@ -7,7 +7,8 @@ class ChatGPTCopyEnhancer {
       colorful: '彩色卡片',
       minimal: '极简风格',
       xiaohongshu: '小红书风格',
-      quote: '引用风格'
+      quote: '引用风格',
+      image: '精美图片'
     };
     this.currentStyle = 'xiaohongshu'; // 默认小红书风格
     this.loadSettings();
@@ -116,6 +117,9 @@ class ChatGPTCopyEnhancer {
       <div class="dropdown-item" data-style="quote">
         <span class="style-icon">💬</span>引用风格
       </div>
+      <div class="dropdown-item" data-style="image">
+        <span class="style-icon">🖼️</span>精美图片
+      </div>
       <div class="dropdown-item" data-style="default">
         <span class="style-icon">📋</span>原始文本
       </div>
@@ -180,15 +184,20 @@ class ChatGPTCopyEnhancer {
       return;
     }
 
-    // 根据样式格式化文本
-    const formattedText = this.formatTextWithStyle(messageText, style);
-    
-    try {
-      await navigator.clipboard.writeText(formattedText);
-      this.showNotification(`已复制 ${this.cardStyles[style]} 格式`, 'success');
-    } catch (error) {
-      console.error('复制失败:', error);
-      this.showNotification('复制失败，请重试', 'error');
+    if (style === 'image') {
+      // 生成图片
+      await this.generateImage(messageText, messageContainer);
+    } else {
+      // 根据样式格式化文本
+      const formattedText = this.formatTextWithStyle(messageText, style);
+      
+      try {
+        await navigator.clipboard.writeText(formattedText);
+        this.showNotification(`已复制 ${this.cardStyles[style]} 格式`, 'success');
+      } catch (error) {
+        console.error('复制失败:', error);
+        this.showNotification('复制失败，请重试', 'error');
+      }
     }
   }
 
@@ -354,6 +363,278 @@ ${text}
 ${quotedLines}
 
 — ChatGPT · ${timestamp}`;
+  }
+
+  async generateImage(messageText, messageContainer) {
+    try {
+      this.showNotification('🎨 正在生成精美图片...', 'info');
+      
+      // 创建图片容器
+      const imageContainer = this.createImageContainer(messageText);
+      
+      // 暂时添加到页面进行渲染
+      document.body.appendChild(imageContainer);
+      
+      // 等待渲染完成
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // 转换为Canvas
+      const canvas = await this.htmlToCanvas(imageContainer);
+      
+      // 移除临时容器
+      document.body.removeChild(imageContainer);
+      
+      // 转换为图片并下载
+      await this.downloadCanvasAsImage(canvas);
+      
+      this.showNotification('🖼️ 图片已生成并下载！', 'success');
+      
+    } catch (error) {
+      console.error('图片生成失败:', error);
+      this.showNotification('图片生成失败，请重试', 'error');
+    }
+  }
+
+  createImageContainer(messageText) {
+    const container = document.createElement('div');
+    container.className = 'image-card-container';
+    
+    // 获取当前时间
+    const now = new Date();
+    const timestamp = now.toLocaleString('zh-CN');
+    
+    // 处理Markdown格式
+    const processedText = this.processMarkdownForImage(messageText);
+    
+    container.innerHTML = `
+      <div class="image-card">
+        <!-- 顶部装饰 -->
+        <div class="card-header">
+          <div class="logo-section">
+            <div class="ai-icon">🤖</div>
+            <div class="title-section">
+              <h2>AI智能问答</h2>
+              <p>ChatGPT助手回答</p>
+            </div>
+          </div>
+          <div class="decoration">✨</div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="card-content">
+          ${processedText}
+        </div>
+        
+        <!-- 底部信息 -->
+        <div class="card-footer">
+          <div class="footer-left">
+            <div class="time">⏰ ${timestamp}</div>
+            <div class="tags">
+              <span class="tag">#AI问答</span>
+              <span class="tag">#ChatGPT</span>
+              <span class="tag">#智能助手</span>
+            </div>
+          </div>
+          <div class="footer-right">
+            <div class="share-text">分享即是传播知识 💡</div>
+          </div>
+        </div>
+        
+        <!-- 装饰元素 -->
+        <div class="decoration-elements">
+          <div class="star star1">⭐</div>
+          <div class="star star2">✨</div>
+          <div class="star star3">💫</div>
+        </div>
+      </div>
+    `;
+    
+    return container;
+  }
+
+  processMarkdownForImage(text) {
+    // 处理Markdown格式，转换为HTML
+    let html = text;
+    
+    // 处理标题
+    html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+    
+    // 处理粗体
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // 处理斜体
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // 处理行内代码
+    html = html.replace(/`(.*?)`/g, '<code>$1</code>');
+    
+    // 处理代码块
+    html = html.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+    
+    // 处理列表
+    html = html.replace(/^[\s]*[-*+]\s+(.*)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+    
+    // 处理数字列表
+    html = html.replace(/^[\s]*\d+\.\s+(.*)$/gm, '<li>$1</li>');
+    
+    // 处理段落
+    html = html.split('\n\n').map(paragraph => {
+      if (paragraph.trim() && 
+          !paragraph.startsWith('<h') && 
+          !paragraph.startsWith('<ul') && 
+          !paragraph.startsWith('<ol') && 
+          !paragraph.startsWith('<pre>')) {
+        return `<p>${paragraph.trim()}</p>`;
+      }
+      return paragraph;
+    }).join('\n');
+    
+    return html;
+  }
+
+  async htmlToCanvas(element) {
+    try {
+      // 使用自定义的HTML2CanvasLite库
+      const html2canvas = new HTML2CanvasLite();
+      const canvas = await html2canvas.render(element);
+      return canvas;
+    } catch (error) {
+      console.error('HTML2Canvas渲染失败，使用备用方案:', error);
+      // 备用方案：简化渲染
+      return this.fallbackCanvasRender(element);
+    }
+  }
+
+  fallbackCanvasRender(element) {
+    return new Promise((resolve, reject) => {
+      try {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const rect = element.getBoundingClientRect();
+        const scale = 2;
+        
+        // 设置canvas尺寸
+        canvas.width = rect.width * scale;
+        canvas.height = rect.height * scale;
+        ctx.scale(scale, scale);
+        
+        // 绘制渐变背景
+        const gradient = ctx.createLinearGradient(0, 0, rect.width, rect.height);
+        gradient.addColorStop(0, '#667eea');
+        gradient.addColorStop(1, '#764ba2');
+        ctx.fillStyle = gradient;
+        
+        // 绘制圆角矩形
+        this.drawRoundedRect(ctx, 0, 0, rect.width, rect.height, 20);
+        ctx.fill();
+        
+        // 绘制白色内容区域
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        this.drawRoundedRect(ctx, 30, 80, rect.width - 60, rect.height - 160, 15);
+        ctx.fill();
+        
+        // 绘制标题
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        ctx.fillText('🤖 AI智能问答', 60, 50);
+        
+        // 绘制内容文本
+        ctx.fillStyle = '#444444';
+        ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        
+        const textContent = element.textContent || '';
+        const lines = this.wrapText(ctx, textContent, rect.width - 120);
+        
+        lines.forEach((line, index) => {
+          if (index < 15) { // 限制行数
+            ctx.fillText(line, 50, 120 + (index * 24));
+          }
+        });
+        
+        // 绘制底部装饰
+        ctx.fillStyle = '#666666';
+        ctx.font = '12px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+        const timestamp = new Date().toLocaleString('zh-CN');
+        ctx.fillText(`⏰ ${timestamp}`, 50, rect.height - 40);
+        
+        ctx.fillText('#AI问答 #ChatGPT #智能助手', 50, rect.height - 20);
+        
+        resolve(canvas);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  drawRoundedRect(ctx, x, y, width, height, radius) {
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+  }
+
+  wrapText(ctx, text, maxWidth) {
+    const words = text.split(' ');
+    const lines = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      const testLine = currentLine + word + ' ';
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > maxWidth && currentLine !== '') {
+        lines.push(currentLine.trim());
+        currentLine = word + ' ';
+      } else {
+        currentLine = testLine;
+      }
+    }
+    
+    if (currentLine.trim() !== '') {
+      lines.push(currentLine.trim());
+    }
+    
+    return lines;
+  }
+
+  async downloadCanvasAsImage(canvas) {
+    return new Promise((resolve, reject) => {
+      try {
+        canvas.toBlob((blob) => {
+          if (!blob) {
+            reject(new Error('无法生成图片'));
+            return;
+          }
+          
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `chatgpt-answer-${Date.now()}.png`;
+          
+          // 模拟点击下载
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          // 清理URL
+          setTimeout(() => URL.revokeObjectURL(url), 100);
+          
+          resolve();
+        }, 'image/png', 0.9);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   showNotification(message, type = 'info') {
